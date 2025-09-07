@@ -6,11 +6,19 @@ import Classes from './components/classes/Classes';
 import Students from './components/students/Student';
 import Teachers from './components/teachers/Teachers';
 import Exams from './components/exams/Exams';
+import Subjects from './components/Subjects/Subject';
 import Upload from './features/fileUpload/Fileupload';
 import './App.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams';
+// ✅ Define ActiveComponent type inline (instead of broken import)
+type ActiveComponent =
+  | 'dashboard'
+  | 'classes'
+  | 'students'
+  | 'teachers'
+  | 'exams'
+  | 'subjects';
 
 interface UploadData {
   streamName: string;
@@ -80,7 +88,13 @@ function App() {
 
   const renderComponent = () => {
     if (currentPage === 'upload' && uploadData) {
-      return <Upload streamName={uploadData.streamName} examId={uploadData.examId} onBack={handleBackToExams} />;
+      return (
+        <Upload
+          streamName={uploadData.streamName}
+          examId={uploadData.examId}
+          onBack={handleBackToExams}
+        />
+      );
     }
 
     switch (activeComponent) {
@@ -94,6 +108,8 @@ function App() {
         return <Teachers />;
       case 'exams':
         return <Exams onUploadClick={handleUploadClick} />;
+      case 'subjects':
+        return <Subjects />;
       default:
         return <Dashboard user={user} />;
     }
@@ -102,25 +118,26 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="app">
-        <Header 
-          user={user} 
-          school={school} 
+        <Header
+          user={user}
+          school={school}
           onMenuClick={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
         />
         <div className="app-body">
-          <Sidebar 
-            activeComponent={activeComponent} 
+          <Sidebar
+            activeComponent={activeComponent}
             setActiveComponent={setActiveComponent}
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
           />
           {isSidebarOpen && isMobile && (
-            <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />
+            <div
+              className="sidebar-overlay"
+              onClick={() => setIsSidebarOpen(false)}
+            />
           )}
-          <main className="main-content">
-            {renderComponent()}
-          </main>
+          <main className="main-content">{renderComponent()}</main>
         </div>
       </div>
     </QueryClientProvider>

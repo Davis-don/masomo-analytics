@@ -15,9 +15,43 @@ datasource db {
 }
 
 model Class {
-  class_id     String @id @default(uuid()) @map("class_id")
-  class_level  Int    @map("class_level")
-  class_stream String @map("class_stream")
+  class_id     String    @id @default(uuid()) @map("class_id")
+  class_level  Int       @map("class_level")
+  class_stream String    @map("class_stream")
+  students     Student[] // one-to-many relationship
 
-  @@map("class_tbl") // maps model to table name class_tbl
+  @@map("class_tbl")
+}
+
+model Student {
+  student_adm_no String           @id @map("student_adm_no")
+  students_name  String           @map("students_name")
+  kcse_entry     Int              @map("kcse_entry")
+  class_id       String           @map("class_id") // foreign key
+
+  class          Class            @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+
+  subjects       StudentSubject[] // relation through explicit join table
+
+  @@map("student_tbl")
+}
+
+model Subject {
+  subject_id     String           @id @default(uuid()) @map("subject_id")
+  subject_name   String           @map("subject_name")
+
+  students       StudentSubject[] // relation through explicit join table
+
+  @@map("subjects_model")
+}
+
+model StudentSubject {
+  student_adm_no String
+  subject_id     String
+
+  student Student @relation(fields: [student_adm_no], references: [student_adm_no], onDelete: Cascade)
+  subject Subject @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+
+  @@id([student_adm_no, subject_id]) // composite primary key
+  @@map("student_subjects_tbl")      // custom table name
 }

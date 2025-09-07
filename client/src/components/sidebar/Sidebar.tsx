@@ -2,7 +2,7 @@
 import React from 'react';
 import './sidebar.css';
 
-type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams';
+type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams' | 'subjects';
 
 interface SidebarProps {
   activeComponent: ActiveComponent;
@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'students', label: 'Students', icon: '👨‍🎓' },
     { id: 'teachers', label: 'Teachers', icon: '👩‍🏫' },
     { id: 'exams', label: 'Exams', icon: '📝' },
+    { id: 'subjects', label: 'Subjects', icon: '📚' },
   ] as const;
 
   const handleItemClick = (itemId: ActiveComponent) => {
@@ -42,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               <li key={item.id} className="nav-item">
                 <button
                   className={`nav-link ${activeComponent === item.id ? 'active' : ''}`}
-                  onClick={() => handleItemClick(item.id)}
+                  onClick={() => handleItemClick(item.id as ActiveComponent)}
                 >
                   <span className="nav-icon">{item.icon}</span>
                   <span className="nav-label">{item.label}</span>
