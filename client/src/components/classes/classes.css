@@ -1,4 +1,256 @@
-/* features/Classes/Classes.css */
+/* features/Classes/classes.css */
 .classes-container {
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.classes-title {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.classes-description {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.classes-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.classes-section-title {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 22px;
+  border-bottom: 2px solid #4361ee;
+  padding-bottom: 8px;
+}
+
+.classes-form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.classes-table-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.classes-table-container {
+  overflow-x: auto;
+}
+
+.classes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.classes-table-header {
+  background-color: #f8f9fa;
+}
+
+.classes-table-th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.classes-table-th.actions-header {
+  text-align: center;
+}
+
+.classes-table-body {
+  background-color: white;
+}
+
+.classes-table-row {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.classes-table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.classes-table-td {
+  padding: 12px;
+  color: #495057;
+}
+
+.classes-table-td.actions-cell {
+  text-align: center;
+}
+
+.classes-delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.classes-delete-btn:hover {
+  background-color: #c82333;
+}
+
+.classes-empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Success Message */
+.classes-success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.success-icon {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Delete Confirmation Modal */
+.classes-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.classes-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.classes-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.classes-modal-icon {
+  color: #dc3545;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.classes-modal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.classes-modal-body {
+  margin-bottom: 25px;
+}
+
+.classes-modal-body p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.classes-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.classes-modal-cancel {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.classes-modal-cancel:hover {
+  background-color: #5a6268;
+}
+
+.classes-modal-confirm {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.classes-modal-confirm:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .classes-container {
+    padding: 15px;
+  }
+  
+  .classes-form-section,
+  .classes-table-section {
+    padding: 20px;
+  }
+  
+  .classes-table-th,
+  .classes-table-td {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .classes-delete-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .classes-modal {
+    padding: 20px;
+    margin: 20px;
+  }
+  
+  .classes-modal-footer {
+    flex-direction: column;
+  }
+  
+  .classes-modal-cancel,
+  .classes-modal-confirm {
+    width: 100%;
+  }
 }

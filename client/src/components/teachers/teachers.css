@@ -1,4 +1,224 @@
-/* features/Teachers/Teachers.css */
+/* features/Teachers/teachers.css */
 .teachers-container {
   padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.teachers-title {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.teachers-description {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.teachers-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.teachers-section-title {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 22px;
+  border-bottom: 2px solid #4361ee;
+  padding-bottom: 8px;
+}
+
+.teachers-form-section,
+.teachers-assignment-section,
+.teachers-table-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.teachers-table-container {
+  overflow-x: auto;
+}
+
+.teachers-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.teachers-table-header {
+  background-color: #f8f9fa;
+}
+
+.teachers-table-th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.teachers-table-th.actions-header {
+  text-align: center;
+}
+
+.teachers-table-body {
+  background-color: white;
+}
+
+.teachers-table-row {
+  border-bottom: 1px solid #eaeaea;
+}
+
+.teachers-table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.teachers-table-td {
+  padding: 12px;
+  color: #495057;
+  vertical-align: top;
+}
+
+.teachers-table-td.actions-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.teachers-subjects-list,
+.teachers-streams-list {
+  display: block;
+  font-size: 14px;
+  line-height: 1.4;
+  max-width: 200px;
+}
+
+.teachers-edit-input,
+.teachers-edit-select {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.teachers-edit-input:focus,
+.teachers-edit-select:focus {
+  outline: none;
+  border-color: #4361ee;
+}
+
+.teachers-edit-btn,
+.teachers-save-btn,
+.teachers-cancel-btn,
+.teachers-delete-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 2px;
+  transition: background-color 0.2s;
+}
+
+.teachers-edit-btn {
+  background-color: #4361ee;
+  color: white;
+}
+
+.teachers-edit-btn:hover {
+  background-color: #3a0ca3;
+}
+
+.teachers-save-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.teachers-save-btn:hover {
+  background-color: #218838;
+}
+
+.teachers-cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.teachers-cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+.teachers-delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.teachers-delete-btn:hover {
+  background-color: #c82333;
+}
+
+.teachers-empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Success Message */
+.teachers-success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.teachers-success-icon {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .teachers-container {
+    padding: 15px;
+  }
+  
+  .teachers-form-section,
+  .teachers-assignment-section,
+  .teachers-table-section {
+    padding: 20px;
+  }
+  
+  .teachers-table-th,
+  .teachers-table-td {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .teachers-edit-btn,
+  .teachers-save-btn,
+  .teachers-cancel-btn,
+  .teachers-delete-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    margin: 1px;
+  }
+  
+  .teachers-table {
+    font-size: 14px;
+  }
+  
+  .teachers-subjects-list,
+  .teachers-streams-list {
+    font-size: 12px;
+    max-width: 150px;
+  }
 }

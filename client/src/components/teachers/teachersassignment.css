@@ -1,0 +1,96 @@
+/* features/Teachers/teacheassignmentform.css */
+.teacher-assignment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+}
+
+.assignment-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.assignment-form-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.assignment-form-select {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 16px;
+  max-width: 300px;
+}
+
+.assignment-form-select:focus {
+  outline: none;
+  border-color: #4361ee;
+}
+
+.assignment-checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  padding: 15px;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.assignment-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.assignment-checkbox-label:hover {
+  background-color: #e9ecef;
+}
+
+.assignment-checkbox {
+  margin: 0;
+}
+
+.assignment-form-submit {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.assignment-form-submit:hover {
+  background-color: #218838;
+}
+
+@media (max-width: 768px) {
+  .assignment-checkbox-group {
+    grid-template-columns: 1fr 1fr;
+    max-height: 200px;
+  }
+  
+  .assignment-form-select {
+    max-width: 100%;
+  }
+  
+  .assignment-form-submit {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}

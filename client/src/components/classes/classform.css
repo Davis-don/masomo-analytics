@@ -1,0 +1,73 @@
+/* features/Classes/classform.css */
+.class-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+}
+
+.class-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.class-form-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.class-form-input,
+.class-form-select {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.class-form-input:focus,
+.class-form-select:focus {
+  outline: none;
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.class-form-input::placeholder {
+  color: #6c757d;
+}
+
+.class-form-submit {
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.class-form-submit:hover {
+  background-color: #3a0ca3;
+}
+
+@media (max-width: 768px) {
+  .class-form {
+    gap: 15px;
+  }
+  
+  .class-form-input,
+  .class-form-select {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  
+  .class-form-submit {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}

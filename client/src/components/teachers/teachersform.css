@@ -1,0 +1,73 @@
+/* features/Teachers/teacherform.css */
+.teacher-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+}
+
+.teacher-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.teacher-form-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.teacher-form-input,
+.teacher-form-select {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.teacher-form-input:focus,
+.teacher-form-select:focus {
+  outline: none;
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.teacher-form-input::placeholder {
+  color: #6c757d;
+}
+
+.teacher-form-submit {
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.teacher-form-submit:hover {
+  background-color: #3a0ca3;
+}
+
+@media (max-width: 768px) {
+  .teacher-form {
+    gap: 15px;
+  }
+  
+  .teacher-form-input,
+  .teacher-form-select {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+  
+  .teacher-form-submit {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
