@@ -1,10 +1,13 @@
-/* components/Sidebar/Sidebar.css */
+/* components/sidebar/Sidebar.css */
 .masomo-sidebar {
   width: 250px;
   background-color: #fff;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
   border-right: 1px solid #eaeaea;
   overflow-y: auto;
+  transition: transform 0.3s ease;
+  z-index: 999;
+  position: relative;
 }
 
 .sidebar-nav {
@@ -51,17 +54,28 @@
   font-weight: 500;
 }
 
+/* Mobile styles */
 @media (max-width: 768px) {
   .masomo-sidebar {
-    width: 70px;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    z-index: 999;
+  }
+  
+  .masomo-sidebar.open {
+    transform: translateX(0);
   }
   
   .nav-label {
-    display: none;
+    display: block;
   }
-  
-  .nav-icon {
-    margin-right: 0;
-    font-size: 20px;
+}
+
+@media (min-width: 769px) {
+  .masomo-sidebar {
+    transform: translateX(0) !important;
   }
 }

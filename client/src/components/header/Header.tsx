@@ -1,6 +1,7 @@
-
+// components/header/Header.tsx
 import React from 'react';
-import './header.css'
+import './header.css';
+
 interface User {
   name: string;
 }
@@ -8,12 +9,21 @@ interface User {
 interface HeaderProps {
   user: User;
   school: string;
+  onMenuClick: () => void;
+  isSidebarOpen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, school }) => {
+const Header: React.FC<HeaderProps> = ({ user, school, onMenuClick, isSidebarOpen }) => {
   return (
     <header className="masomo-header">
       <div className="header-left">
+        <button 
+          className="menu-toggle"
+          onClick={onMenuClick}
+          aria-label="Toggle menu"
+        >
+          <span className={isSidebarOpen ? "hamburger open" : "hamburger"}></span>
+        </button>
         <div className="logo">
           <span className="logo-icon">M</span>
           <span className="logo-text">Masomo Analytics</span>

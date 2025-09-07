@@ -1,4 +1,4 @@
-// components/Sidebar/Sidebar.tsx
+// components/sidebar/Sidebar.tsx
 import React from 'react';
 import './sidebar.css';
 
@@ -7,9 +7,16 @@ type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exam
 interface SidebarProps {
   activeComponent: ActiveComponent;
   setActiveComponent: (component: ActiveComponent) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeComponent, setActiveComponent }) => {
+const Sidebar: React.FC<SidebarProps> = ({ 
+  activeComponent, 
+  setActiveComponent, 
+  isOpen,
+  onClose
+}) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'classes', label: 'Classes', icon: '🏫' },
@@ -18,24 +25,34 @@ const Sidebar: React.FC<SidebarProps> = ({ activeComponent, setActiveComponent }
     { id: 'exams', label: 'Exams', icon: '📝' },
   ] as const;
 
+  const handleItemClick = (itemId: ActiveComponent) => {
+    setActiveComponent(itemId);
+    // Close sidebar on mobile after selection
+    if (window.innerWidth < 768) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="masomo-sidebar">
-      <nav className="sidebar-nav">
-        <ul className="nav-list">
-          {menuItems.map((item) => (
-            <li key={item.id} className="nav-item">
-              <button
-                className={`nav-link ${activeComponent === item.id ? 'active' : ''}`}
-                onClick={() => setActiveComponent(item.id)}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
+    <>
+      <aside className={`masomo-sidebar ${isOpen ? 'open' : ''}`}>
+        <nav className="sidebar-nav">
+          <ul className="nav-list">
+            {menuItems.map((item) => (
+              <li key={item.id} className="nav-item">
+                <button
+                  className={`nav-link ${activeComponent === item.id ? 'active' : ''}`}
+                  onClick={() => handleItemClick(item.id)}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="nav-label">{item.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    </>
   );
 };
 
