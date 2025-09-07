@@ -1,4 +1,3 @@
-// App.tsx
 import { useState, useEffect } from 'react';
 import Header from './components/header/Header';
 import Sidebar from './components/sidebar/Sidebar';
@@ -9,6 +8,7 @@ import Teachers from './components/teachers/Teachers';
 import Exams from './components/exams/Exams';
 import Upload from './features/fileUpload/Fileupload';
 import './App.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams';
 
@@ -18,6 +18,9 @@ interface UploadData {
 }
 
 function App() {
+  // Create react-query client once
+  const queryClient = new QueryClient();
+
   const [activeComponent, setActiveComponent] = useState<ActiveComponent>('dashboard');
   const [user] = useState({ name: 'Davis Mwai' });
   const [school] = useState('Nairobi School');
@@ -30,59 +33,40 @@ function App() {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      // Auto-close sidebar on resize to mobile
-      if (mobile) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
+      if (mobile) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
     };
-
-    // Set initial state based on screen size
     handleResize();
-    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Handle swipe to open/close sidebar on mobile
   useEffect(() => {
     let touchStartX = 0;
     let touchEndX = 0;
-    
+
     const handleTouchStart = (e: TouchEvent) => {
       touchStartX = e.changedTouches[0].screenX;
     };
-    
+
     const handleTouchEnd = (e: TouchEvent) => {
       if (!isMobile) return;
-      
       touchEndX = e.changedTouches[0].screenX;
       const swipeDistance = touchEndX - touchStartX;
-      
-      // Swipe right to open sidebar (from left edge)
-      if (touchStartX < 50 && swipeDistance > 50) {
-        setIsSidebarOpen(true);
-      }
-      
-      // Swipe left to close sidebar
-      if (isSidebarOpen && swipeDistance < -50) {
-        setIsSidebarOpen(false);
-      }
+
+      if (touchStartX < 50 && swipeDistance > 50) setIsSidebarOpen(true);
+      if (isSidebarOpen && swipeDistance < -50) setIsSidebarOpen(false);
     };
-    
+
     document.addEventListener('touchstart', handleTouchStart);
     document.addEventListener('touchend', handleTouchEnd);
-    
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isMobile, isSidebarOpen]);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   const handleUploadClick = (streamName: string, examId: number) => {
     setUploadData({ streamName, examId });
@@ -96,13 +80,7 @@ function App() {
 
   const renderComponent = () => {
     if (currentPage === 'upload' && uploadData) {
-      return (
-        <Upload 
-          streamName={uploadData.streamName} 
-          examId={uploadData.examId}
-          onBack={handleBackToExams}
-        />
-      );
+      return <Upload streamName={uploadData.streamName} examId={uploadData.examId} onBack={handleBackToExams} />;
     }
 
     switch (activeComponent) {
@@ -122,32 +100,30 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <Header 
-        user={user} 
-        school={school} 
-        onMenuClick={toggleSidebar}
-        isSidebarOpen={isSidebarOpen}
-      />
-      <div className="app-body">
-        <Sidebar 
-          activeComponent={activeComponent} 
-          setActiveComponent={setActiveComponent}
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
+    <QueryClientProvider client={queryClient}>
+      <div className="app">
+        <Header 
+          user={user} 
+          school={school} 
+          onMenuClick={toggleSidebar}
+          isSidebarOpen={isSidebarOpen}
         />
-        {/* Overlay for mobile when sidebar is open */}
-        {isSidebarOpen && isMobile && (
-          <div 
-            className="sidebar-overlay"
-            onClick={() => setIsSidebarOpen(false)}
+        <div className="app-body">
+          <Sidebar 
+            activeComponent={activeComponent} 
+            setActiveComponent={setActiveComponent}
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
           />
-        )}
-        <main className="main-content">
-          {renderComponent()}
-        </main>
+          {isSidebarOpen && isMobile && (
+            <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />
+          )}
+          <main className="main-content">
+            {renderComponent()}
+          </main>
+        </div>
       </div>
-    </div>
+    </QueryClientProvider>
   );
 }
 
