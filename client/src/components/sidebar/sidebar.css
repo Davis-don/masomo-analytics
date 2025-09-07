@@ -1,0 +1,67 @@
+/* components/Sidebar/Sidebar.css */
+.masomo-sidebar {
+  width: 250px;
+  background-color: #fff;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #eaeaea;
+  overflow-y: auto;
+}
+
+.sidebar-nav {
+  padding: 20px 0;
+}
+
+.nav-list {
+  list-style: none;
+}
+
+.nav-item {
+  margin-bottom: 5px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #555;
+  font-size: 16px;
+}
+
+.nav-link:hover {
+  background-color: #f0f5ff;
+}
+
+.nav-link.active {
+  background-color: #4361ee;
+  color: white;
+}
+
+.nav-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.nav-label {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .masomo-sidebar {
+    width: 70px;
+  }
+  
+  .nav-label {
+    display: none;
+  }
+  
+  .nav-icon {
+    margin-right: 0;
+    font-size: 20px;
+  }
+}
