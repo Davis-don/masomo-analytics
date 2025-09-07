@@ -7,9 +7,15 @@ import Classes from './components/classes/Classes';
 import Students from './components/students/Student';
 import Teachers from './components/teachers/Teachers';
 import Exams from './components/exams/Exams';
+import Upload from './features/fileUpload/Fileupload';
 import './App.css';
 
 type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams';
+
+interface UploadData {
+  streamName: string;
+  examId: number;
+}
 
 function App() {
   const [activeComponent, setActiveComponent] = useState<ActiveComponent>('dashboard');
@@ -17,6 +23,8 @@ function App() {
   const [school] = useState('Nairobi School');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [currentPage, setCurrentPage] = useState<'main' | 'upload'>('main');
+  const [uploadData, setUploadData] = useState<UploadData | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -76,7 +84,27 @@ function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleUploadClick = (streamName: string, examId: number) => {
+    setUploadData({ streamName, examId });
+    setCurrentPage('upload');
+  };
+
+  const handleBackToExams = () => {
+    setCurrentPage('main');
+    setUploadData(null);
+  };
+
   const renderComponent = () => {
+    if (currentPage === 'upload' && uploadData) {
+      return (
+        <Upload 
+          streamName={uploadData.streamName} 
+          examId={uploadData.examId}
+          onBack={handleBackToExams}
+        />
+      );
+    }
+
     switch (activeComponent) {
       case 'dashboard':
         return <Dashboard user={user} />;
@@ -87,7 +115,7 @@ function App() {
       case 'teachers':
         return <Teachers />;
       case 'exams':
-        return <Exams />;
+        return <Exams onUploadClick={handleUploadClick} />;
       default:
         return <Dashboard user={user} />;
     }
