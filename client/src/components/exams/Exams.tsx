@@ -1,96 +1,160 @@
 // features/Exams/Exams.tsx
 import React, { useState, useEffect } from 'react';
+import ExamForm from './Examform';
 import './exams.css';
+import { useQuery } from '@tanstack/react-query';
+import { toast, Toaster } from 'sonner';
 
 interface Exam {
-  id: number;
+  exam_id: string;
   name: string;
   date: string;
-  streams: number;
+  term: number;
+  year: number;
   status: 'upcoming' | 'ongoing' | 'completed';
+  classes: {
+    class: {
+      class_id: string;
+      class_level: number;
+      class_stream: string;
+    };
+  }[];
 }
 
-interface StreamExam {
-  id: number;
+interface ClassExam {
+  class_id: string;
   name: string;
   status: 'upload' | 'review' | 'published' | 'archived';
 }
 
 interface ExamsProps {
-  onUploadClick: (streamName: string, examId: number) => void;
+  onUploadClick: (className: string, examId: string) => void;
 }
 
 const Exams: React.FC<ExamsProps> = ({ onUploadClick }) => {
   const [exams, setExams] = useState<Exam[]>([]);
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
-  const [streamExams, setStreamExams] = useState<StreamExam[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [classExams, setClassExams] = useState<ClassExam[]>([]);
+  const [showExamForm, setShowExamForm] = useState(false);
 
-  // Simulate fetching data
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const currentYear = new Date().getFullYear();
+
+  // Fetch exams for the current year
+  const { data: examsData = [], isLoading: examsLoading, refetch } = useQuery<Exam[]>({
+    queryKey: ['exams', currentYear],
+    queryFn: async (): Promise<Exam[]> => {
+      const response = await fetch(`${apiUrl}/api/exams/fetch-all-exams?year=${currentYear}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch exams');
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Update exams when data is fetched
   useEffect(() => {
-    const fetchExamData = () => {
-      setTimeout(() => {
-        const examData: Exam[] = [
-          { id: 1, name: 'End of Term 2 Examinations', date: '2023-11-15', streams: 12, status: 'upcoming' },
-          { id: 2, name: 'Mid Term 2 Examinations', date: '2023-09-20', streams: 12, status: 'completed' },
-          { id: 3, name: 'End of Term 1 Examinations', date: '2023-06-30', streams: 12, status: 'completed' }
-        ];
-        setExams(examData);
-        setSelectedExam(examData[0]);
+    if (examsData.length > 0) {
+      setExams(examsData);
+      setSelectedExam(examsData[0]);
+    } else {
+      setExams([]);
+      setSelectedExam(null);
+    }
+  }, [examsData]);
 
-        const streamData: StreamExam[] = [
-          { id: 1, name: 'Form 1 East', status: 'upload' },
-          { id: 2, name: 'Form 1 West', status: 'upload' },
-          { id: 3, name: 'Form 2 North', status: 'review' },
-          { id: 4, name: 'Form 2 South', status: 'upload' },
-          { id: 5, name: 'Form 3 Alpha', status: 'published' },
-          { id: 6, name: 'Form 3 Beta', status: 'upload' },
-          { id: 7, name: 'Form 4 Red', status: 'archived' },
-          { id: 8, name: 'Form 4 Blue', status: 'upload' }
-        ];
-        setStreamExams(streamData);
-        setLoading(false);
-      }, 800);
-    };
+  // Generate class exams data from selected exam
+  useEffect(() => {
+    if (selectedExam) {
+      const classExamsData: ClassExam[] = selectedExam.classes.map((classExam) => ({
+        class_id: classExam.class.class_id,
+        name: `Form ${classExam.class.class_level} - ${classExam.class.class_stream}`,
+        status: 'upload' // Default status
+      }));
+      setClassExams(classExamsData);
+    } else {
+      setClassExams([]);
+    }
+  }, [selectedExam]);
 
-    fetchExamData();
-  }, []);
-
-  const handleStatusChange = (id: number, newStatus: StreamExam['status']) => {
-    setStreamExams(prev =>
-      prev.map(stream => (stream.id === id ? { ...stream, status: newStatus } : stream))
+  const handleStatusChange = (classId: string, newStatus: ClassExam['status']) => {
+    setClassExams(prev =>
+      prev.map(classExam => 
+        classExam.class_id === classId ? { ...classExam, status: newStatus } : classExam
+      )
     );
   };
 
-  const handleUploadClick = (streamName: string) => {
-    if (selectedExam) onUploadClick(streamName, selectedExam.id);
+  const handleUploadClick = (className: string) => {
+    if (selectedExam) onUploadClick(className, selectedExam.exam_id);
+  };
+
+  const handleAddExamSuccess = () => {
+    setShowExamForm(false);
+    refetch(); // Refetch exams after adding a new one
+    toast.success('Exam added successfully!');
   };
 
   // Centralized status configuration
   const statusConfig: Record<
-    StreamExam['status'],
-    { label: string; color: string; action: (stream: StreamExam) => void }
+    ClassExam['status'],
+    { label: string; color: string; action: (classExam: ClassExam) => void }
   > = {
-    upload: { label: 'Upload', color: '#4361ee', action: (stream) => handleUploadClick(stream.name) },
-    review: { label: 'Under Review', color: '#f9c74f', action: (stream) => handleStatusChange(stream.id, 'published') },
-    published: { label: 'Published', color: '#2a9d8f', action: (stream) => handleStatusChange(stream.id, 'archived') },
-    archived: { label: 'Archived', color: '#6c757d', action: (stream) => handleStatusChange(stream.id, 'upload') }
+    upload: { 
+      label: 'Upload', 
+      color: '#4361ee', 
+      action: (classExam) => handleUploadClick(classExam.name) 
+    },
+    review: { 
+      label: 'Under Review', 
+      color: '#f9c74f', 
+      action: (classExam) => handleStatusChange(classExam.class_id, 'published') 
+    },
+    published: { 
+      label: 'Published', 
+      color: '#2a9d8f', 
+      action: (classExam) => handleStatusChange(classExam.class_id, 'archived') 
+    },
+    archived: { 
+      label: 'Archived', 
+      color: '#6c757d', 
+      action: (classExam) => handleStatusChange(classExam.class_id, 'upload') 
+    }
   };
 
-  const getStatusButton = (stream: StreamExam) => {
-    const config = statusConfig[stream.status];
+  const getStatusButton = (classExam: ClassExam) => {
+    const config = statusConfig[classExam.status];
     return (
-      <button className="status-btn" style={{ backgroundColor: config.color }} onClick={() => config.action(stream)}>
+      <button 
+        className="status-btn" 
+        style={{ backgroundColor: config.color }} 
+        onClick={() => config.action(classExam)}
+      >
         {config.label}
       </button>
     );
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+    return new Date(dateString).toLocaleDateString(undefined, { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
   };
 
-  if (loading) {
+  // Group exams by term
+  const examsByTerm = exams.reduce((acc, exam) => {
+    if (!acc[exam.term]) {
+      acc[exam.term] = [];
+    }
+    acc[exam.term].push(exam);
+    return acc;
+  }, {} as Record<number, Exam[]>);
+
+  if (examsLoading) {
     return (
       <div className="exams-container">
         <div className="exams-loading">Loading exam data...</div>
@@ -100,33 +164,55 @@ const Exams: React.FC<ExamsProps> = ({ onUploadClick }) => {
 
   return (
     <div className="exams-container">
+      <Toaster richColors position="top-center" />
+      
+      {showExamForm && (
+        <ExamForm 
+          onSuccess={handleAddExamSuccess}
+          onCancel={() => setShowExamForm(false)} 
+        />
+      )}
+      
       <div className="exams-header">
         <h1>Examination Management</h1>
-        <p>Manage and monitor exam progress across all streams</p>
+        <p>Manage and monitor exam progress across all classes</p>
+        <button 
+          className="add-exam-btn"
+          onClick={() => setShowExamForm(true)}
+        >
+          + Add New Exam
+        </button>
       </div>
 
+      {/* Exam Selector Dropdown */}
       <div className="exam-selector-card">
         <div className="exam-selector-header">
-          <h2>Select Examination</h2>
+          <h2>Select Examination ({currentYear})</h2>
         </div>
         <div className="exam-selector-content">
           <div className="exam-dropdown">
             <label htmlFor="exam-select">Choose an exam:</label>
-            <select
-              id="exam-select"
-              value={selectedExam?.id || ''}
-              onChange={e => {
-                const examId = parseInt(e.target.value);
-                const exam = exams.find(ex => ex.id === examId);
-                if (exam) setSelectedExam(exam);
-              }}
-            >
-              {exams.map(exam => (
-                <option key={exam.id} value={exam.id}>
-                  {exam.name} ({formatDate(exam.date)})
-                </option>
-              ))}
-            </select>
+            <div className="dropdown-container">
+              <select
+                id="exam-select"
+                value={selectedExam?.exam_id || ''}
+                onChange={(e) => {
+                  const exam = exams.find(ex => ex.exam_id === e.target.value);
+                  if (exam) setSelectedExam(exam);
+                }}
+                className="exam-dropdown-select"
+              >
+                {Object.entries(examsByTerm).map(([term, termExams]) => (
+                  <optgroup key={term} label={`Term ${term} (${currentYear})`}>
+                    {termExams.map((exam) => (
+                      <option key={exam.exam_id} value={exam.exam_id}>
+                        {exam.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
           </div>
 
           {selectedExam && (
@@ -136,8 +222,12 @@ const Exams: React.FC<ExamsProps> = ({ onUploadClick }) => {
                 <span className="detail-value">{formatDate(selectedExam.date)}</span>
               </div>
               <div className="exam-detail">
-                <span className="detail-label">Streams:</span>
-                <span className="detail-value">{selectedExam.streams}</span>
+                <span className="detail-label">Term:</span>
+                <span className="detail-value">Term {selectedExam.term}</span>
+              </div>
+              <div className="exam-detail">
+                <span className="detail-label">Year:</span>
+                <span className="detail-value">{selectedExam.year}</span>
               </div>
               <div className="exam-detail">
                 <span className="detail-label">Status:</span>
@@ -150,35 +240,38 @@ const Exams: React.FC<ExamsProps> = ({ onUploadClick }) => {
         </div>
       </div>
 
-      <div className="stream-exams-section">
-        <h2>Stream Exam Status - {selectedExam?.name}</h2>
-        <div className="stream-exams-table-container">
-          <table className="stream-exams-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name of Stream</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {streamExams.map((stream, index) => (
-                <tr key={stream.id}>
-                  <td>{index + 1}</td>
-                  <td>{stream.name}</td>
-                  <td>
-                    <span className={`status-indicator ${stream.status}`}>
-                      {stream.status.charAt(0).toUpperCase() + stream.status.slice(1)}
-                    </span>
-                  </td>
-                  <td>{getStatusButton(stream)}</td>
+      {/* Class Exams Table - Only show if an exam is selected */}
+      {selectedExam && (
+        <div className="class-exams-section">
+          <h2>Class Exam Status - {selectedExam.name}</h2>
+          <div className="class-exams-table-container">
+            <table className="class-exams-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name of Class</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {classExams.map((classExam, index) => (
+                  <tr key={classExam.class_id}>
+                    <td>{index + 1}</td>
+                    <td>{classExam.name}</td>
+                    <td>
+                      <span className={`status-indicator ${classExam.status}`}>
+                        {classExam.status.charAt(0).toUpperCase() + classExam.status.slice(1)}
+                      </span>
+                    </td>
+                    <td>{getStatusButton(classExam)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

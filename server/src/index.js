@@ -4,6 +4,7 @@ import cors from 'cors';
 import classRoutes from './Routes/classroutes.js';
 import studentRoutes from './Routes/studentsroutes.js';
 import subjectRoutes from './Routes/Subjectroutes.js'; 
+import examRoutes from './Routes/examroutes.js'
 
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use('/api/class', classRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/subjects', subjectRoutes);
+app.use('/api/exams', examRoutes);
 
 
 

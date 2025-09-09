@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
@@ -14,37 +8,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ----------------------
+// Class model
+// ----------------------
 model Class {
   class_id     String    @id @default(uuid()) @map("class_id")
   class_level  Int       @map("class_level")
   class_stream String    @map("class_stream")
   students     Student[] // one-to-many relationship
 
+  // Many-to-many relation through ClassExam
+  exams ClassExam[]
+
   @@map("class_tbl")
 }
 
+// ----------------------
+// Student model
+// ----------------------
 model Student {
-  student_adm_no String           @id @map("student_adm_no")
-  students_name  String           @map("students_name")
-  kcse_entry     Int              @map("kcse_entry")
-  class_id       String           @map("class_id") // foreign key
+  student_adm_no String @id @map("student_adm_no")
+  students_name  String @map("students_name")
+  kcse_entry     Int    @map("kcse_entry")
+  class_id       String @map("class_id") // foreign key
 
-  class          Class            @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
-
-  subjects       StudentSubject[] // relation through explicit join table
+  class    Class            @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+  subjects StudentSubject[] // relation through explicit join table
 
   @@map("student_tbl")
 }
 
+// ----------------------
+// Subject model
+// ----------------------
 model Subject {
-  subject_id     String           @id @default(uuid()) @map("subject_id")
-  subject_name   String           @map("subject_name")
-
-  students       StudentSubject[] // relation through explicit join table
+  subject_id   String           @id @default(uuid()) @map("subject_id")
+  subject_name String           @map("subject_name")
+  students     StudentSubject[] // relation through explicit join table
 
   @@map("subjects_model")
 }
 
+// ----------------------
+// StudentSubject join table
+// ----------------------
 model StudentSubject {
   student_adm_no String
   subject_id     String
@@ -52,6 +59,37 @@ model StudentSubject {
   student Student @relation(fields: [student_adm_no], references: [student_adm_no], onDelete: Cascade)
   subject Subject @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
 
-  @@id([student_adm_no, subject_id]) // composite primary key
-  @@map("student_subjects_tbl")      // custom table name
+  @@id([student_adm_no, subject_id])
+  @@map("student_subjects_tbl")
+}
+
+// ----------------------
+// Exam model
+// ----------------------
+model Exam {
+  exam_id String   @id @default(uuid()) @map("exam_id")
+  name    String   @map("exam_name")
+  date    DateTime @map("exam_date")
+  term    Int
+  year    Int
+  status  String   @map("exam_status") // 'upcoming', 'ongoing', 'completed'
+
+  // Many-to-many relation through ClassExam
+  classes ClassExam[]
+
+  @@map("exam_tbl")
+}
+
+// ----------------------
+// ClassExam join table
+// ----------------------
+model ClassExam {
+  class_id String
+  exam_id  String
+
+  class Class @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+  exam  Exam  @relation(fields: [exam_id], references: [exam_id], onDelete: Cascade)
+
+  @@id([class_id, exam_id])
+  @@map("class_exams_tbl")
 }
