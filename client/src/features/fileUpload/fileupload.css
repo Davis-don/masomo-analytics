@@ -1,11 +1,17 @@
-/* features/Upload/Upload.css */
-.upload-container {
+.fileupload-container {
   padding: 20px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.upload-header {
+.fileupload-loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}
+
+.fileupload-header {
   margin-bottom: 30px;
 }
 
@@ -13,68 +19,69 @@
   background: none;
   border: none;
   color: #4361ee;
-  font-size: 16px;
   cursor: pointer;
-  padding: 5px 0;
+  font-size: 16px;
   margin-bottom: 15px;
+  padding: 5px 0;
 }
 
 .back-button:hover {
   text-decoration: underline;
 }
 
-.upload-header h1 {
+.fileupload-header h1 {
+  margin: 0 0 10px 0;
   color: #333;
-  margin-bottom: 8px;
-  font-size: 28px;
 }
 
-.upload-header p {
+.fileupload-header p {
+  margin: 0;
   color: #666;
   font-size: 16px;
 }
 
-.upload-card {
+.fileupload-card {
   background: white;
   border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.upload-instructions {
+.fileupload-instructions {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
   margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #eaeaea;
 }
 
-.upload-instructions h3 {
+.fileupload-instructions h3 {
   margin: 0 0 15px 0;
   color: #333;
 }
 
-.upload-instructions ul {
+.fileupload-instructions ul {
   margin: 0;
   padding-left: 20px;
-  color: #666;
 }
 
-.upload-instructions li {
+.fileupload-instructions li {
   margin-bottom: 8px;
+  color: #555;
 }
 
-.upload-tabs {
+.fileupload-tabs {
   display: flex;
-  border-bottom: 1px solid #eaeaea;
-  margin-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
+  margin-bottom: 25px;
 }
 
 .tab-button {
   background: none;
   border: none;
-  padding: 12px 20px;
+  padding: 12px 24px;
   cursor: pointer;
   font-size: 16px;
-  color: #666;
+  color: #6c757d;
   border-bottom: 3px solid transparent;
 }
 
@@ -84,31 +91,36 @@
   font-weight: 600;
 }
 
+.tab-button:hover:not(.active) {
+  color: #333;
+}
+
 .manual-entry {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .out-of-marks {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .out-of-marks label {
+  display: block;
+  margin-bottom: 8px;
   font-weight: 600;
   color: #333;
-  white-space: nowrap;
 }
 
-.out-of-marks input {
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  width: 100px;
+.out-of-marks-input {
+  padding: 10px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 16px;
+  width: 200px;
+}
+
+.out-of-marks-input:focus {
+  outline: none;
+  border-color: #4361ee;
 }
 
 .students-table-container {
@@ -123,57 +135,60 @@
 .students-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.students-table th,
-.students-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eaeaea;
+  background: white;
 }
 
 .students-table th {
-  background-color: #f8f9fa;
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
   font-weight: 600;
   color: #333;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.students-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .students-table tr:hover {
-  background-color: #f8f9fa;
+  background: #f8f9fa;
 }
 
 .marks-input {
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
+  padding: 8px 10px;
+  border: 2px solid #e9ecef;
   border-radius: 4px;
-  width: 100px;
+  font-size: 14px;
+  width: 80px;
+}
+
+.marks-input:focus {
+  outline: none;
+  border-color: #4361ee;
 }
 
 .percentage-cell {
   font-weight: 600;
-  color: #4361ee;
+  color: #2a9d8f;
 }
 
 .file-upload-area {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .drop-zone {
-  border: 2px dashed #ced4da;
+  border: 2px dashed #dee2e6;
   border-radius: 8px;
-  padding: 40px 20px;
+  padding: 40px;
   text-align: center;
-  transition: all 0.3s;
-  cursor: pointer;
+  margin-bottom: 20px;
+  transition: border-color 0.3s ease;
 }
 
 .drop-zone:hover {
   border-color: #4361ee;
-  background-color: #f8f9fa;
 }
 
 .file-input {
@@ -182,52 +197,60 @@
 
 .drop-label {
   cursor: pointer;
+  display: block;
 }
 
 .upload-icon {
-  font-size: 40px;
+  font-size: 48px;
   margin-bottom: 15px;
 }
 
 .drop-label p {
   margin: 0 0 10px 0;
-  color: #495057;
-  font-weight: 500;
+  color: #333;
+  font-size: 18px;
 }
 
 .file-types {
+  display: block;
   color: #6c757d;
-  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.exam-info {
+  display: block;
+  color: #4361ee;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
 .file-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  margin-top: 20px;
 }
 
 .file-list h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
   color: #333;
 }
 
 .file-item {
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 10px;
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   border-radius: 6px;
+  margin-bottom: 8px;
 }
 
 .file-name {
   flex: 1;
-  color: #495057;
+  font-weight: 500;
+  color: #333;
 }
 
 .file-size {
   color: #6c757d;
-  font-size: 14px;
+  margin: 0 15px;
 }
 
 .remove-file {
@@ -235,92 +258,84 @@
   border: none;
   color: #dc3545;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   padding: 0;
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+}
+
+.remove-file:hover {
+  background: #dc3545;
+  color: white;
 }
 
 .upload-progress {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  margin: 20px 0;
 }
 
 .progress-bar {
-  flex: 1;
+  width: 100%;
   height: 8px;
-  background-color: #e9ecef;
+  background: #e9ecef;
   border-radius: 4px;
   overflow: hidden;
+  margin-bottom: 8px;
 }
 
 .progress-fill {
   height: 100%;
-  background-color: #4361ee;
-  transition: width 0.3s;
+  background: #4361ee;
+  border-radius: 4px;
+  transition: width 0.3s ease;
 }
 
 .progress-text {
-  color: #495057;
-  font-weight: 500;
-  min-width: 40px;
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+  display: block;
 }
 
 .upload-button {
-  background-color: #4361ee;
+  width: 100%;
+  padding: 15px;
+  background: #4361ee;
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  align-self: flex-start;
+  transition: background-color 0.3s ease;
 }
 
 .upload-button:hover:not(:disabled) {
-  background-color: #3a0ca3;
+  background: #3a56d4;
 }
 
 .upload-button:disabled {
-  background-color: #6c757d;
+  background: #6c757d;
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
-  .upload-container {
-    padding: 15px;
-  }
-  
-  .upload-card {
-    padding: 20px;
-  }
-  
-  .drop-zone {
-    padding: 30px 15px;
-  }
-  
-  .students-table {
-    font-size: 14px;
-  }
-  
-  .students-table th,
-  .students-table td {
-    padding: 8px;
-  }
-  
-  .marks-input {
-    width: 80px;
-  }
-  
-  .out-of-marks {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.upload-summary {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e7f5ff;
+  border-radius: 6px;
+  border-left: 4px solid #4361ee;
+}
+
+.upload-summary h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.upload-summary p {
+  margin: 0;
+  color: #666;
 }

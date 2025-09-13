@@ -1,53 +1,194 @@
-// features/Upload/Upload.tsx
 import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import './fileupload.css';
 
-interface UploadProps {
+interface FileuploadProps {
+  className: string;
+  classId: string;
+  examId: string;
+  subjectId: string;
+  subjectName: string;
   streamName: string;
-  examId: number;
   onBack: () => void;
 }
 
+interface ExamResult {
+  marks: number;
+  percentage: number | null;
+  exam_id: string;
+  subject_id: string;
+}
+
 interface Student {
-  id: number;
-  name: string;
-  admissionNumber: string;
+  student_adm_no: string;
+  students_name: string;
+  class_id: string;
+  kcse_entry: number;
+  class: {
+    class_id: string;
+    class_level: number;
+    class_stream: string;
+  };
+  subjects: Array<{
+    subject_id: string;
+    student_adm_no: string;
+    subject: {
+      subject_id: string;
+      subject_name: string;
+    };
+  }>;
+  results: ExamResult[];
 }
 
 interface StudentResult extends Student {
   marks: string;
+  percentage?: string;
 }
 
-const Upload: React.FC<UploadProps> = ({ streamName, examId, onBack }) => {
+interface ManualUploadResult {
+  student_adm_no: string;
+  marks: number;
+  percentage: number;
+}
+
+const Fileupload: React.FC<FileuploadProps> = ({
+  className,
+  classId,
+  examId,
+  subjectId,
+  subjectName,
+  streamName,
+  onBack
+}) => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [outOfMarks, setOutOfMarks] = useState<string>('');
   const [students, setStudents] = useState<StudentResult[]>([]);
   const [activeTab, setActiveTab] = useState<'manual' | 'file'>('manual');
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  // Dummy student data (simulating database fetch)
-  const dummyStudents: Student[] = [
-    { id: 1, name: 'John Kamau', admissionNumber: 'ST001' },
-    { id: 2, name: 'Mary Wanjiku', admissionNumber: 'ST002' },
-    { id: 3, name: 'James Ochieng', admissionNumber: 'ST003' },
-    { id: 4, name: 'Grace Achieng', admissionNumber: 'ST004' },
-    { id: 5, name: 'Peter Mwangi', admissionNumber: 'ST005' },
-    { id: 6, name: 'Sarah Njeri', admissionNumber: 'ST006' },
-    { id: 7, name: 'David Otieno', admissionNumber: 'ST007' },
-    { id: 8, name: 'Esther Wambui', admissionNumber: 'ST008' },
-    { id: 9, name: 'Michael Njoroge', admissionNumber: 'ST009' },
-    { id: 10, name: 'Lilian Atieno', admissionNumber: 'ST010' }
-  ];
+  const apiUrl = import.meta.env.VITE_API_URL;
 
+  // Fetch students by class, subject, stream, and exam
+  const { data: studentsData = [], isLoading: studentsLoading, refetch: refetchStudents } = useQuery<Student[]>({
+    queryKey: ['students', classId, subjectId, streamName, examId],
+    queryFn: async (): Promise<Student[]> => {
+      const params = new URLSearchParams({
+        class_id: classId,
+        subject_id: subjectId,
+        stream_name: streamName,
+        exam_id: examId
+      });
+
+      const response = await fetch(
+        `${apiUrl}/api/student/fetch-students-by-class-subject?${params}`
+      );
+      if (!response.ok) {
+        throw new Error('Failed to fetch students');
+      }
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
+    enabled: !!classId && !!subjectId && !!streamName && !!examId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Initialize students with marks field when data is fetched
   useEffect(() => {
-    // Initialize students with marks field
-    const initialStudents = dummyStudents.map(student => ({
-      ...student,
-      marks: ''
-    }));
-    setStudents(initialStudents);
-  }, []);
+    if (studentsData.length > 0) {
+      const initialStudents = studentsData.map(student => {
+        const existingResult = student.results.find(result => 
+          result.exam_id === examId && result.subject_id === subjectId
+        );
+
+        return {
+          ...student,
+          marks: existingResult ? existingResult.marks.toString() : '',
+          percentage: existingResult?.percentage ? existingResult.percentage.toString() : undefined
+        };
+      });
+      setStudents(initialStudents);
+      
+      if (studentsData[0]?.results[0]?.marks) {
+        const maxMarks = Math.max(...studentsData
+          .map(s => s.results.find(r => r.exam_id === examId && r.subject_id === subjectId)?.marks || 0)
+          .filter(marks => marks > 0)
+        );
+        if (maxMarks > 0) {
+          setOutOfMarks(maxMarks.toString());
+        }
+      }
+    }
+  }, [studentsData, examId, subjectId]);
+
+  // Effect to navigate back after successful upload
+  useEffect(() => {
+    if (uploadSuccess) {
+      const timer = setTimeout(() => {
+        onBack();
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [uploadSuccess, onBack]);
+
+  // Mutation for uploading manual results - sets status to publish
+  const uploadManualResultsMutation = useMutation({
+    mutationFn: async (resultsData: {
+      exam_id: string;
+      class_id: string;
+      subject_id: string;
+      out_of: number;
+      results: ManualUploadResult[];
+    }) => {
+      const response = await fetch(`${apiUrl}/api/results/bulk-update-results`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          exam_id: resultsData.exam_id,
+          class_id: resultsData.class_id,
+          subject_id: resultsData.subject_id,
+          updates: resultsData.results,
+          publish: true
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Upload failed');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      setIsUploading(false);
+      setUploadProgress(100);
+      setUploadSuccess(true);
+      
+      toast.success('Results published successfully!', {
+        description: 'Results have been saved and published',
+        duration: 5000,
+      });
+      
+      setTimeout(() => {
+        refetchStudents();
+      }, 1000);
+    },
+    onError: (error: Error) => {
+      setIsUploading(false);
+      setUploadProgress(0);
+      setUploadSuccess(false);
+      
+      toast.error('Upload failed', {
+        description: error.message,
+        duration: 5000,
+      });
+    },
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -56,75 +197,118 @@ const Upload: React.FC<UploadProps> = ({ streamName, examId, onBack }) => {
     }
   };
 
-  const handleUpload = () => {
+  const handleManualUpload = async () => {
+    if (!outOfMarks || students.some(s => s.marks === '')) {
+      toast.error('Validation Error', {
+        description: 'Please fill out all marks and set "Out of Marks" value',
+        duration: 5000,
+      });
+      return;
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
 
-    // Calculate percentages
-    const resultsWithPercentages = students.map(student => {
-      const marksNum = parseFloat(student.marks);
-      const outOfNum = parseFloat(outOfMarks);
-      const percentage = outOfNum > 0 ? (marksNum / outOfNum) * 100 : 0;
-      
-      return {
-        ...student,
-        percentage: !isNaN(percentage) ? percentage.toFixed(2) : '0.00'
-      };
-    });
-
-    // Example: Log examId for reference (can be used for backend API)
-    console.log(`Uploading results for examId: ${examId}, stream: ${streamName}`, {
-      outOfMarks,
-      students: resultsWithPercentages,
-      files
-    });
-
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          setFiles([]);
-          alert(`Results uploaded successfully for ${streamName} (Exam ID: ${examId})`);
-          return 100;
-        }
-        return prev + 10;
+    try {
+      // Calculate percentages and prepare results
+      const results: ManualUploadResult[] = students.map(student => {
+        const marksNum = parseFloat(student.marks) || 0;
+        const outOfNum = parseFloat(outOfMarks) || 100;
+        const percentage = outOfNum > 0 ? (marksNum / outOfNum) * 100 : 0;
+        
+        return {
+          student_adm_no: student.student_adm_no,
+          marks: marksNum,
+          percentage: percentage
+        };
       });
-    }, 300);
+
+      // Prepare data for API call
+      const uploadData = {
+        exam_id: examId,
+        class_id: classId,
+        subject_id: subjectId,
+        out_of: parseFloat(outOfMarks) || 100,
+        results: results
+      };
+
+      // Simulate progress for better UX
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 300);
+
+      // Execute the mutation
+      uploadManualResultsMutation.mutate(uploadData);
+      
+      // Clear the progress interval when mutation completes
+      setTimeout(() => clearInterval(progressInterval), 10000);
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      setIsUploading(false);
+      setUploadProgress(0);
+      toast.error('Upload failed', {
+        description: 'An unexpected error occurred',
+        duration: 5000,
+      });
+    }
   };
 
   const removeFile = (index: number) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleMarksChange = (id: number, value: string) => {
-    const updatedStudents = students.map(student => 
-      student.id === id ? { ...student, marks: value } : student
-    );
-    setStudents(updatedStudents);
+  const handleMarksChange = (admissionNumber: string, value: string) => {
+    // Allow only numbers and empty string
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      const updatedStudents = students.map(student => 
+        student.student_adm_no === admissionNumber ? { ...student, marks: value } : student
+      );
+      setStudents(updatedStudents);
+    }
   };
 
+  if (studentsLoading) {
+    return (
+      <div className="fileupload-container">
+        <div className="fileupload-loading">Loading student data for {subjectName}...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="upload-container">
-      <div className="upload-header">
+    <div className="fileupload-container">
+      <div className="fileupload-header">
         <button className="back-button" onClick={onBack}>
           &larr; Back to Exams
         </button>
         <h1>Upload Exam Results</h1>
-        <p>Upload exam results for {streamName} (Exam ID: {examId})</p>
+        <p>
+          Upload results for <strong>{className} - {streamName}</strong> | 
+          <strong> {subjectName}</strong> (Subject ID: {subjectId}) | 
+          Exam ID: {examId}
+        </p>
       </div>
 
-      <div className="upload-card">
-        <div className="upload-instructions">
+      <div className="fileupload-card">
+        <div className="fileupload-instructions">
           <h3>Upload Instructions</h3>
           <ul>
             <li>You can manually enter student marks or upload a file</li>
             <li>Accepted file formats: CSV and Excel files</li>
             <li>Maximum file size: 10MB per file</li>
+            <li><strong>Subject:</strong> {subjectName} (ID: {subjectId})</li>
+            <li><strong>Exam:</strong> ID: {examId}</li>
           </ul>
         </div>
 
-        <div className="upload-tabs">
+        <div className="fileupload-tabs">
           <button 
             className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
             onClick={() => setActiveTab('manual')}
@@ -148,13 +332,15 @@ const Upload: React.FC<UploadProps> = ({ streamName, examId, onBack }) => {
                 id="out-of-marks"
                 value={outOfMarks}
                 onChange={(e) => setOutOfMarks(e.target.value)}
-                placeholder="Enter total marks"
+                placeholder="Enter total marks (e.g., 100)"
                 min="0"
+                step="0.5"
+                className="out-of-marks-input"
               />
             </div>
 
             <div className="students-table-container">
-              <h4>Student Results:</h4>
+              <h4>Student Results for {subjectName}:</h4>
               <table className="students-table">
                 <thead>
                   <tr>
@@ -167,22 +353,23 @@ const Upload: React.FC<UploadProps> = ({ streamName, examId, onBack }) => {
                 </thead>
                 <tbody>
                   {students.map((student, index) => {
-                    const marksNum = parseFloat(student.marks);
-                    const outOfNum = parseFloat(outOfMarks);
+                    const marksNum = parseFloat(student.marks) || 0;
+                    const outOfNum = parseFloat(outOfMarks) || 100;
                     const percentage = outOfNum > 0 ? (marksNum / outOfNum) * 100 : 0;
                     
                     return (
-                      <tr key={student.id}>
+                      <tr key={student.student_adm_no}>
                         <td>{index + 1}</td>
-                        <td>{student.name}</td>
-                        <td>{student.admissionNumber}</td>
+                        <td>{student.students_name}</td>
+                        <td>{student.student_adm_no}</td>
                         <td>
                           <input
                             type="number"
                             value={student.marks}
-                            onChange={(e) => handleMarksChange(student.id, e.target.value)}
+                            onChange={(e) => handleMarksChange(student.student_adm_no, e.target.value)}
                             min="0"
                             max={outOfMarks || undefined}
+                            step="0.5"
                             className="marks-input"
                             placeholder="Enter marks"
                           />
@@ -214,12 +401,14 @@ const Upload: React.FC<UploadProps> = ({ streamName, examId, onBack }) => {
                 <div className="upload-icon">📁</div>
                 <p>Drag & drop files here or click to browse</p>
                 <span className="file-types">CSV, XLSX, XLS</span>
+                <span className="exam-info">Subject: {subjectName} (ID: {subjectId})</span>
+                <span className="exam-info">Exam ID: {examId}</span>
               </label>
             </div>
 
             {files.length > 0 && (
               <div className="file-list">
-                <h4>Selected Files:</h4>
+                <h4>Selected Files for {subjectName}:</h4>
                 {files.map((file, index) => (
                   <div key={index} className="file-item">
                     <span className="file-name">{file.name}</span>
@@ -252,18 +441,30 @@ const Upload: React.FC<UploadProps> = ({ streamName, examId, onBack }) => {
 
         <button 
           className="upload-button"
-          onClick={handleUpload}
+          onClick={activeTab === 'manual' ? handleManualUpload : () => {}}
           disabled={
             (activeTab === 'manual' && (!outOfMarks || students.some(s => s.marks === ''))) ||
             (activeTab === 'file' && files.length === 0) ||
             isUploading
           }
         >
-          {isUploading ? 'Uploading...' : 'Submit Results'}
+          {isUploading ? 'Uploading...' : `Publish ${subjectName} Results`}
         </button>
+
+        {!isUploading && students.some(s => s.marks !== '') && (
+          <div className="upload-summary">
+            <h4>Summary:</h4>
+            <p>
+              {students.filter(s => s.marks !== '').length} of {students.length} students have marks entered
+            </p>
+            <p className="publish-notice">
+              ⚠️ Clicking "Publish Results" will make these results visible to students and parents.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default Upload;
+export default Fileupload;

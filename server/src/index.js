@@ -5,6 +5,7 @@ import classRoutes from './Routes/classroutes.js';
 import studentRoutes from './Routes/studentsroutes.js';
 import subjectRoutes from './Routes/Subjectroutes.js'; 
 import examRoutes from './Routes/examroutes.js'
+import resultRoutes from './Routes/examresultRoute.js'; 
 
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api/class', classRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/exams', examRoutes);
+app.use('/api/results', resultRoutes);
 
 
 

@@ -15,10 +15,11 @@ model Class {
   class_id     String    @id @default(uuid()) @map("class_id")
   class_level  Int       @map("class_level")
   class_stream String    @map("class_stream")
-  students     Student[] // one-to-many relationship
 
-  // Many-to-many relation through ClassExam
-  exams ClassExam[]
+  students     Student[]
+  exams        ClassExam[]
+  classExamSubjects ClassExamSubject[]
+  results      ExamResult[]   // <--- reverse relation
 
   @@map("class_tbl")
 }
@@ -30,10 +31,11 @@ model Student {
   student_adm_no String @id @map("student_adm_no")
   students_name  String @map("students_name")
   kcse_entry     Int    @map("kcse_entry")
-  class_id       String @map("class_id") // foreign key
+  class_id       String @map("class_id")
 
-  class    Class            @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
-  subjects StudentSubject[] // relation through explicit join table
+  class          Class            @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+  subjects       StudentSubject[]
+  results        ExamResult[]
 
   @@map("student_tbl")
 }
@@ -44,7 +46,10 @@ model Student {
 model Subject {
   subject_id   String           @id @default(uuid()) @map("subject_id")
   subject_name String           @map("subject_name")
-  students     StudentSubject[] // relation through explicit join table
+
+  students     StudentSubject[]
+  results      ExamResult[]
+  classExamSubjects ClassExamSubject[]
 
   @@map("subjects_model")
 }
@@ -72,10 +77,11 @@ model Exam {
   date    DateTime @map("exam_date")
   term    Int
   year    Int
-  status  String   @map("exam_status") // 'upcoming', 'ongoing', 'completed'
+  status  String   @map("exam_status")
 
-  // Many-to-many relation through ClassExam
   classes ClassExam[]
+  classExamSubjects ClassExamSubject[]
+  results ExamResult[]
 
   @@map("exam_tbl")
 }
@@ -92,4 +98,45 @@ model ClassExam {
 
   @@id([class_id, exam_id])
   @@map("class_exams_tbl")
+}
+
+// ----------------------
+// NEW: ClassExamSubject join table
+// ----------------------
+model ClassExamSubject {
+  class_id   String
+  exam_id    String
+  subject_id String
+  status     String @default("upload") @map("status")
+
+  class   Class   @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+  exam    Exam    @relation(fields: [exam_id], references: [exam_id], onDelete: Cascade)
+  subject Subject @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+
+  @@id([class_id, exam_id, subject_id])
+  @@map("class_exam_subjects_tbl")
+}
+
+// ----------------------
+// ExamResult model
+// ----------------------
+model ExamResult {
+  result_id      String   @id @default(uuid()) @map("result_id")
+  student_adm_no String
+  exam_id        String
+  subject_id     String
+  class_id       String   @map("class_id")   // <--- NEW
+  marks           Float    @map("marks_obtained")
+  percentage      Float?
+  grade           String?
+  created_at      DateTime @default(now()) @map("created_at")
+  updated_at      DateTime @updatedAt @map("updated_at")
+
+  student Student @relation(fields: [student_adm_no], references: [student_adm_no], onDelete: Cascade)
+  exam    Exam    @relation(fields: [exam_id], references: [exam_id], onDelete: Cascade)
+  subject Subject @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+  class   Class   @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+
+  @@unique([student_adm_no, exam_id, subject_id])
+  @@map("exam_results_tbl")
 }
