@@ -1,21 +1,33 @@
-/* components/sidebar/Sidebar.css */
+/* components/sidebar/sidebar.css */
 .masomo-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
   width: 250px;
-  background-color: #fff;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-  border-right: 1px solid #eaeaea;
-  overflow-y: auto;
-  transition: transform 0.3s ease;
-  z-index: 999;
-  position: relative;
+  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+  color: white;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.masomo-sidebar.open {
+  transform: translateX(0);
 }
 
 .sidebar-nav {
   padding: 20px 0;
+  flex: 1;
 }
 
 .nav-list {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .nav-item {
@@ -29,53 +41,56 @@
   padding: 12px 20px;
   background: none;
   border: none;
+  color: #e5e7eb;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.2s;
-  color: #555;
+  transition: all 0.2s ease;
   font-size: 16px;
 }
 
 .nav-link:hover {
-  background-color: #f0f5ff;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
 .nav-link.active {
-  background-color: #4361ee;
+  background-color: #3b82f6;
   color: white;
+  border-right: 4px solid #93c5fd;
 }
 
 .nav-icon {
   margin-right: 12px;
   font-size: 18px;
+  width: 24px;
+  text-align: center;
 }
 
 .nav-label {
-  font-weight: 500;
+  flex: 1;
 }
 
-/* Mobile styles */
-@media (max-width: 768px) {
+/* Responsive styles */
+@media (min-width: 768px) {
   .masomo-sidebar {
-    position: fixed;
-    top: 70px;
-    left: 0;
-    bottom: 0;
-    transform: translateX(-100%);
-    z-index: 999;
-  }
-  
-  .masomo-sidebar.open {
+    position: relative;
     transform: translateX(0);
+    height: 100vh;
   }
   
-  .nav-label {
-    display: block;
+  .sidebar-overlay {
+    display: none;
   }
 }
 
-@media (min-width: 769px) {
-  .masomo-sidebar {
-    transform: translateX(0) !important;
+@media (max-width: 767px) {
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
   }
 }

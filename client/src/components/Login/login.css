@@ -1,0 +1,355 @@
+.loginAttractiveContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.loginAttractiveBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.loginAttractiveShape {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.loginAttractiveShapeOne {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  left: -100px;
+}
+
+.loginAttractiveShapeTwo {
+  width: 200px;
+  height: 200px;
+  bottom: -50px;
+  right: 100px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.loginAttractiveShapeThree {
+  width: 150px;
+  height: 150px;
+  bottom: 150px;
+  left: 150px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.loginAttractiveCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 420px;
+  padding: 35px;
+  animation: loginAttractiveEntrance 0.6s ease-out;
+  z-index: 2;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes loginAttractiveEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.loginAttractiveHeader {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.loginAttractiveTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 8px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loginAttractiveSubtitle {
+  color: #718096;
+  font-size: 15px;
+}
+
+.loginAttractiveForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.loginAttractiveInputGroup {
+  margin-bottom: 20px;
+}
+
+.loginAttractiveInputLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.loginAttractiveInputContainer {
+  position: relative;
+}
+
+.loginAttractiveInputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.loginAttractiveInputField {
+  width: 100%;
+  padding: 15px 15px 15px 48px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.3s;
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.loginAttractiveInputField:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  background: white;
+}
+
+.loginAttractiveInputField:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loginAttractivePasswordToggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #a0aec0;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginAttractivePasswordToggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loginAttractiveOptionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+.loginAttractiveRememberMe {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #4a5568;
+}
+
+.loginAttractiveRememberMe input {
+  display: none;
+}
+
+.loginAttractiveCheckmark {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  margin-right: 8px;
+  position: relative;
+  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.loginAttractiveRememberMe input:checked + .loginAttractiveCheckmark {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+}
+
+.loginAttractiveRememberMe input:checked + .loginAttractiveCheckmark::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.loginAttractiveForgotLink {
+  color: #667eea;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-weight: 500;
+}
+
+.loginAttractiveForgotLink:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.loginAttractiveSubmitButton {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loginAttractiveSubmitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(102, 126, 234, 0.4);
+}
+
+.loginAttractiveSubmitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.loginAttractiveButtonLoading {
+  padding-left: 44px;
+}
+
+.loginAttractiveSpinner {
+  position: absolute;
+  left: 20px;
+  animation: loginAttractiveSpin 1s linear infinite;
+}
+
+@keyframes loginAttractiveSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loginAttractiveSignupPrompt {
+  text-align: center;
+  color: #718096;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.loginAttractiveSignupLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.loginAttractiveSignupLink:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .loginAttractiveContainer {
+    padding: 15px;
+  }
+  
+  .loginAttractiveCard {
+    padding: 25px 20px;
+  }
+  
+  .loginAttractiveOptionsRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .loginAttractiveForgotLink {
+    margin-left: 26px;
+  }
+  
+  .loginAttractiveShapeOne,
+  .loginAttractiveShapeTwo,
+  .loginAttractiveShapeThree {
+    display: none;
+  }
+}
+.loginAttractiveHelpText {
+  font-size: 12px;
+  color: #667eea;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.loginAttractiveHelpText {
+  font-size: 12px;
+  color: #667eea;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.loginAttractiveHelpText i {
+  font-size: 11px;
+}
+
+.loginAttractiveClearCredentials {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.loginAttractiveClearCredentials:hover {
+  color: #c53030;
+}
+
+.loginAttractiveClearCredentials:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

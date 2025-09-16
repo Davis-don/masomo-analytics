@@ -9,17 +9,58 @@ datasource db {
 }
 
 // ----------------------
+// User model (Admin users)
+// ----------------------
+model User {
+  user_id      String   @id @default(uuid()) @map("user_id")
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  phoneNumber  String   @map("phone_number")
+  email        String   @unique @map("email")
+  dob          DateTime @map("date_of_birth")
+  userName     String   @unique @map("username")
+  password     String   @map("password_hash")
+  role         String   @default("admin") @map("role")
+  school_id    String   @map("school_id")
+
+  school       School   @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+
+  created_at   DateTime @default(now()) @map("created_at")
+  updated_at   DateTime @updatedAt @map("updated_at")
+
+  @@map("users_tbl")
+}
+
+// ----------------------
+// School model
+// ----------------------
+model School {
+  school_id String   @id @default(uuid()) @map("school_id")
+  name      String   @map("school_name")
+  username  String   @unique              // ✅ new field
+  location  String?
+
+  classes   Class[]
+  users     User[]
+
+  @@map("school_tbl")
+}
+
+
+// ----------------------
 // Class model
 // ----------------------
 model Class {
   class_id     String    @id @default(uuid()) @map("class_id")
   class_level  Int       @map("class_level")
   class_stream String    @map("class_stream")
+  school_id    String    @map("school_id")
 
+  school       School      @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
   students     Student[]
   exams        ClassExam[]
   classExamSubjects ClassExamSubject[]
-  results      ExamResult[]   // <--- reverse relation
+  results      ExamResult[]
 
   @@map("class_tbl")
 }
@@ -101,7 +142,7 @@ model ClassExam {
 }
 
 // ----------------------
-// NEW: ClassExamSubject join table
+// ClassExamSubject join table
 // ----------------------
 model ClassExamSubject {
   class_id   String
@@ -125,12 +166,12 @@ model ExamResult {
   student_adm_no String
   exam_id        String
   subject_id     String
-  class_id       String   @map("class_id")   // <--- NEW
-  marks           Float    @map("marks_obtained")
-  percentage      Float?
-  grade           String?
-  created_at      DateTime @default(now()) @map("created_at")
-  updated_at      DateTime @updatedAt @map("updated_at")
+  class_id       String   @map("class_id")
+  marks          Float    @map("marks_obtained")
+  percentage     Float?
+  grade          String?
+  created_at     DateTime @default(now()) @map("created_at")
+  updated_at     DateTime @updatedAt @map("updated_at")
 
   student Student @relation(fields: [student_adm_no], references: [student_adm_no], onDelete: Cascade)
   exam    Exam    @relation(fields: [exam_id], references: [exam_id], onDelete: Cascade)

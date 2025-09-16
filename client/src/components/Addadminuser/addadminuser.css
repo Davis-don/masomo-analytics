@@ -1,0 +1,242 @@
+.adminUserAddContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.adminUserAddBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.adminUserAddShape {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.adminUserAddShapeOne {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  left: -100px;
+}
+
+.adminUserAddShapeTwo {
+  width: 200px;
+  height: 200px;
+  bottom: -50px;
+  right: 100px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.adminUserAddShapeThree {
+  width: 150px;
+  height: 150px;
+  bottom: 150px;
+  left: 150px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.adminUserAddCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 480px;
+  padding: 35px;
+  animation: adminUserAddEntrance 0.6s ease-out;
+  z-index: 2;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes adminUserAddEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.adminUserAddHeader {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.adminUserAddTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 8px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.adminUserAddSubtitle {
+  color: #718096;
+  font-size: 15px;
+}
+
+.adminUserAddForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.adminUserAddInputGroup {
+  margin-bottom: 20px;
+}
+
+.adminUserAddInputLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.adminUserAddInputContainer {
+  position: relative;
+}
+
+.adminUserAddInputIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #667eea;
+  font-size: 16px;
+  z-index: 1;
+}
+
+.adminUserAddInputField {
+  width: 100%;
+  padding: 15px 15px 15px 48px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.3s;
+  outline: none;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.adminUserAddInputField:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  background: white;
+}
+
+.adminUserAddInputField:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.adminUserAddInputField[readonly] {
+  background-color: #f7fafc;
+}
+
+.adminUserAddHelpText {
+  font-size: 12px;
+  color: #718096;
+  margin-top: 5px;
+}
+
+.adminUserAddErrorText {
+  font-size: 12px;
+  color: #e53e3e;
+  margin-top: 5px;
+}
+
+.adminUserAddSubmitButton {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.adminUserAddSubmitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(102, 126, 234, 0.4);
+}
+
+.adminUserAddSubmitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.adminUserAddButtonLoading {
+  padding-left: 44px;
+}
+
+.adminUserAddSpinner {
+  position: absolute;
+  left: 20px;
+  animation: adminUserAddSpin 1s linear infinite;
+}
+
+@keyframes adminUserAddSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.adminUserAddBackPrompt {
+  text-align: center;
+  color: #718096;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.adminUserAddBackLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+.adminUserAddBackLink:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .adminUserAddContainer {
+    padding: 15px;
+  }
+  
+  .adminUserAddCard {
+    padding: 25px 20px;
+    max-width: 100%;
+  }
+  
+  .adminUserAddShapeOne,
+  .adminUserAddShapeTwo,
+  .adminUserAddShapeThree {
+    display: none;
+  }
+}

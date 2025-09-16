@@ -2,7 +2,7 @@
 import React from 'react';
 import './sidebar.css';
 
-type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams' | 'subjects';
+type ActiveComponent = 'dashboard' | 'classes' | 'students' | 'teachers' | 'exams' | 'subjects' | 'schools';
 
 interface SidebarProps {
   activeComponent: ActiveComponent;
@@ -24,6 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'teachers', label: 'Teachers', icon: '👩‍🏫' },
     { id: 'exams', label: 'Exams', icon: '📝' },
     { id: 'subjects', label: 'Subjects', icon: '📚' },
+    { id: 'schools', label: 'Schools', icon: '🏢' },
   ] as const;
 
   const handleItemClick = (itemId: ActiveComponent) => {
